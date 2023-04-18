@@ -231,7 +231,7 @@ export default function FlightHotelBooking() {
                             <TabPanel value="Debit/Credit Card">
                                 <form>
                                     <div className='mb-3'>
-                                        <div class='required-field'>
+                                        <div className='required-field'>
                                             <label htmlFor='cardOwnerName' className='form-label'>Name on Card </label>
                                         </div>
                                         <input
@@ -241,7 +241,7 @@ export default function FlightHotelBooking() {
                                             value={cardOwnerName}
                                             onChange={(e) => onCardInputChange(e)}
                                         />
-                                        <div class='required-field'>
+                                        <div className='required-field'>
                                             <label htmlFor='cardType' className='form-label'>Card Type</label>
                                         </div>
 
@@ -253,7 +253,7 @@ export default function FlightHotelBooking() {
                                             <option value="VISA">VISA</option>
                                             <option value="MASTERCARD">MASTER CARD</option>
                                         </select>
-                                        <div class='required-field'>
+                                        <div className='required-field'>
                                             <label htmlFor='cardNumber' className='form-label'>Debit/Credit card number </label>
                                         </div>
                                         <input
@@ -265,7 +265,7 @@ export default function FlightHotelBooking() {
                                             value={cardNumber}
                                             onChange={(e) => onCardInputChange(e)}
                                         />
-                                        <div class='required-field'>
+                                        <div className='required-field'>
                                             <label htmlFor='expiryDate' className='form-label'>Expiration date </label>
                                         </div>
                                         <input
@@ -275,7 +275,7 @@ export default function FlightHotelBooking() {
                                             value={expiryDate}
                                             onChange={(e) => onCardInputChange(e)}
                                         />
-                                        <div class='required-field'>
+                                        <div className='required-field'>
                                             <label htmlFor='cvv' className='form-label'>Security code </label>
                                         </div>
                                         <input

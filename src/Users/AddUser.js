@@ -140,7 +140,7 @@ export default function AddUser() {
           <form onSubmit={(e) => onSubmit(e)}>
             <div className='mb-3'>
               <div className="row">
-                <div class="col s12 m6 ">
+                <div className="col s12 m6 ">
                   <label htmlFor='firstname' className='form-label required-field'> First Name </label>
                   <input
                     type={"text"}
@@ -153,7 +153,7 @@ export default function AddUser() {
                   // onChange = {(e) => setFirstName(e.target.value)}
                   />
                 </div>
-                <div class="col s12 m6">
+                <div className="col s12 m6">
                   <label htmlFor='middleName' className='form-label '> Middle Name </label>
                   <input
                     type={"text"}
@@ -167,7 +167,7 @@ export default function AddUser() {
               </div>
               <div className='add-space'></div>
               <div className="row">
-                <div class="col s12 m6">
+                <div className="col s12 m6">
 
                   <label htmlFor='lastName' className='form-label required-field'> Last Name </label>
                   <input
@@ -180,7 +180,7 @@ export default function AddUser() {
                     onChange={(e) => onInputChange(e)}
                   />
                 </div>
-                <div class="col s12 m6">
+                <div className="col s12 m6">
                   <label htmlFor='email' className='form-label required-field'> Email </label>
                   <input
                     type={"email"}
@@ -195,7 +195,7 @@ export default function AddUser() {
               </div>
               <div className='add-space'></div>
               <div className="row">
-                <div class="col s12 m6">
+                <div className="col s12 m6">
                   <label htmlFor='username' className='form-label required-field'> Username </label>
                   <input
                     type={"text"}
@@ -207,7 +207,7 @@ export default function AddUser() {
                     onChange={(e) => onInputChange(e)}
                   />
                 </div>
-                <div class="col s12 m6">
+                <div className="col s12 m6">
                   <label htmlFor='password' className='form-label required-field'> Password </label>
                   <input
                     type={"password"}
@@ -234,7 +234,7 @@ export default function AddUser() {
 
               <div className='add-space'></div>
               <div className="row">
-                <div class="col s12 m6">
+                <div className="col s12 m6">
 
                   <label htmlFor='cardNumber' className='form-label required-field'>Card Number </label>
                   <input
@@ -247,7 +247,7 @@ export default function AddUser() {
                     onChange={(e) => onCardInputChange(e)}
                   />
                 </div>
-                <div class="col s12 m6">
+                <div className="col s12 m6">
 
                   <label htmlFor='cardType' className='form-label required-field'>Card Type</label>
                   <select value={cardType}
@@ -265,7 +265,7 @@ export default function AddUser() {
               <div className='add-space'></div>
               <div className="row">
 
-                <div class="col s12 m6">
+                <div className="col s12 m6">
                   <label htmlFor='expiryDate' className='form-label required-field'>Expiry Date </label>
                   <input
                     type={"month"}
@@ -278,7 +278,7 @@ export default function AddUser() {
                   />
 
                 </div>
-                <div class="col s12 m6">
+                <div className="col s12 m6">
                   <label htmlFor='cvv' className='form-label required-field'>CVV </label>
                   <input
                     type={"number"}

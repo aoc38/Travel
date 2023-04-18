@@ -33,17 +33,17 @@ export default function FlightStatusList(props) {
               <div className="add-space"></div>
               <div className="col-md-8 offset-md-2 border rounded p-4 mt-2 shadow text-center ">
                 <div className="row">
-                  <div class="col s12 m6">
+                  <div className="col s12 m6">
                     <AirlinesOutlined />
                     <span className="text-bold"> {props.fsdata.airline}</span>
                   </div>
-                  <div class="col s12 m6 ">
+                  <div className="col s12 m6 ">
                     <FlightOutlined />
                     <span className="text-bold">
                       {props.fsdata.flightNumber}
                     </span>
                   </div>
-                  <div class="col s12 m6 ">
+                  <div className="col s12 m6 ">
                     <AirplaneTicket />
                     <span className="text-bold">
                       {props.fsdata.isInflight ? "In Flight" : ""}

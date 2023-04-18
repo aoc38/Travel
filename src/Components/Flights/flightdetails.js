@@ -20,7 +20,10 @@ function Flightdetails() {
 
   console.log("data in Flight details page: ", id);
   console.log("passenger count in Flight details page: ", pc);
-  let data = getFlightById(id);
+  // let data = getFlightById(id);
+  //get new data from session 
+  let data =  JSON.parse(sessionStorage.getItem("user-flight-data")).filter((obj) => obj.id === id);
+  console.log("flight data from flight details page",data);
   let flight = data.length === 1 ? data[0] : {};
   sessionStorage.setItem("flight-data", JSON.stringify(flight));
   sessionStorage.setItem("passenger-count", (pc));
@@ -30,7 +33,7 @@ function Flightdetails() {
   // let flight = data.length == 1 ? data[0] : {};
   // console.log("flight details" , flight);
   const getPrice = (flight) => {
-    return flight.price * noOfPassengers;
+    return flight.flightPrice  * noOfPassengers;
   }
   const taxAmont = (flight) => {
     return (15 / 100) * getPrice(flight);
@@ -64,7 +67,7 @@ function Flightdetails() {
             <span className="text-bold"> Airline</span>
           </div>
           <div className="col s12 m6 ">
-            <span>{flight.airline}</span>
+            <span>{flight.airlineName}</span>
           </div>
           <div className="add-space"></div>
           <div className="row">
@@ -79,19 +82,19 @@ function Flightdetails() {
           </div>
           <div className="row">
             <div className="col s12 m6 ">
-              <span>{flight.departureCityName}</span>
+              <span>{flight.source}</span>
             </div>
             <div className="col s12 m6 ">
-              <span>{flight.arrivalCityName}</span>
+              <span>{flight.destination}</span>
             </div>
           </div>
           <div className="row">
             <div className="col s12 m6 ">
-              <span>{flight.departureTime}</span>
+              <span>{flight.departureDate}</span>
             </div>
             <div className="col s12 m6 ">
 
-              <span>{flight.arrivalTime}</span>
+              <span>{flight.arrivalDate}</span>
             </div>
           </div>
 

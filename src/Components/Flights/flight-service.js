@@ -18,11 +18,11 @@ export function getFlightBookingTypes() {
         {
             name: "One way",
             id: "oneWay",
-        },
-        {
-            name: "Return",
-            id: "return",
-        },
+        }
+        // {
+        //     name: "Return",
+        //     id: "return",
+        // },
     ]
 }
 

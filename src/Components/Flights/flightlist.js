@@ -8,22 +8,25 @@ function FlightList(props) {
 
   const getSource = (flight) => {
     //return flight.segments[0].departure.iataCode
-    return flight.departureCityName;
+    return flight.source;
   }
 
   const getDestination = (flight) => {
    // return flight.segments[flight.segments.length - 1].arrival.iataCode
-   return flight.arrivalCityName;
+   return flight.destination;
   }
 
   const getStartTime = (flight) => {
     //return flight.segments[0].departure.at;
-    return flight.departureDate +" "+ flight.departureTime;
+    // return flight.departureDate +" "+ flight.departureTime;
+    return flight.departureDate;
   }
 
   const getEndTime = (flight) => {
    // return flight.segments[flight.segments.length - 1].arrival.at;
-   return flight.arrivalDate+" "+flight.arrivalTime;
+  //  return flight.arrivalDate+" "+flight.arrivalTime;
+  return flight.arrivalDate;
+
   }
 
   const getTimings = (flight) => {
@@ -47,7 +50,7 @@ function FlightList(props) {
   }
 
   const getPrice = (flight) => {
-    return flight.price * props.noOfPassengers;
+    return flight.flightPrice * props.noOfPassengers;
   }
 
   // const getStops = (flight) => {

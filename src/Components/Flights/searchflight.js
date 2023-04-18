@@ -13,8 +13,9 @@ import { getLocations } from '../../services/flight/amadeus-api-service';
 import { Fab } from '@mui/material';
 import { RateReview } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import axios from "axios";
 
-var flightsJsonData = require('../DummyDataFiles/FlightsDummy/FlightSearchData.json');
+// var flightsJsonData = require('../DummyDataFiles/FlightsDummy/FlightSearchData.json');
 
 const styles = {
   position: "fixed",
@@ -48,6 +49,12 @@ function SearchFlight() {
   const [filterBy, setFilterBy] = useState("");
   const [disableButton, setDisableButton] = useState(true);
 
+  const [userFlight, setUserFlight] = useState({
+    psourceCity: "",
+    pdestinationCity: "",
+    pdepartureDate: "",
+    parrivalDate: "",
+  });
   const handleBookType = (id) => {
     setBookingType(id);
     switch (id) {
@@ -55,9 +62,9 @@ function SearchFlight() {
         setBookReturn(false);
         setReturnDate("");
         break;
-      case "return":
-        setBookReturn(true);
-        break;
+      // case "return":
+      //   setBookReturn(true);
+      //   break;
       default:
         setBookReturn(false);
         setReturnDate("");
@@ -90,8 +97,18 @@ function SearchFlight() {
     validateForm();
 
   }
+  const updateUserFlight = (request) => {
+    setUserFlight({
+      ...userFlight,
+      psourceCity: request.source.address.cityName,
+      pdestinationCity: request.destination.address.cityName,
+      pdepartureDate: departureDate,
+      parrivalDate: departureDate
+    });
+  }
+  
 
-  const fetchFlights = async () => {
+  const fetchFlights = () => {
     let request = {
       'source': source,
       'destination': destination,
@@ -101,135 +118,164 @@ function SearchFlight() {
       'noOfPassengers': noOfPassengers,
       'filterBy': filterBy
     }
-
-    let response = await getFlightSearchReq(request);
-    console.log("response from 108 in search flight : ", response);
-    let flights = response;
-    setFlights(flights);
-    setShowList(true);
-  }
-
-  function getFlightSearchReq(request) {
-    // TODO make a REST call to backend and get data for testing using JSON file
-
-    let data = JSON.parse(JSON.stringify(flightsJsonData));
-    let resultList = data.data.filter(
-      (obj) =>
-        (obj.departureCityName === request.source.address.cityName) &&
-        (obj.arrivalCityName === request.destination.address.cityName)
-    );
-    if (request.filterBy && request.filterBy === 'Price: High to Low') {
-      resultList = resultList.sort((a, b) => a.price - b.price)
-    } else if (request.filterBy && request.filterBy === 'Price: Low to high') {
-      resultList = resultList.sort((a, b) => b.price - a.price);
-    } else if (request.filterBy && request.filterBy === 'Airline') {
-      resultList = resultList.sort((a, b) => b.company - a.company);
-    }
-    return resultList;
-  }
-
-
-  const onFilterSelected = (type) => {
-    setFilterBy(type);
-    fetchFlights();
-  }
-
-  const validateForm = () => {
-    let buttonVal = disableSearchBtn();
-    setDisableButton(buttonVal);
-  }
-
-  const disableSearchBtn = () => {
-    if (noOfPassengers && source !== '' && destination !== '' && departureDate !== '') {
-      if (bookReturn) {
-        return returnDate === '';
-      } else {
-        return false;
+    updateUserFlight(request);
+    const fetchData = async (e) => {
+    // e.preventDefault();
+    try {
+      let response = await axios.post("http://localhost:8080/adduserflight", userFlight);
+      console.log("response  in search flight : ", response);
+      setFlights(response.data);      
+      sessionStorage.setItem("user-flight-data",JSON.stringify(response.data));
+      if (response.data.message !== undefined) {
+        alert(response.data.message);
       }
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
     }
+  };
 
-    return true;
-  }
+  fetchData();
+  
+  setShowList(true);
+};
 
-  const canLocationBeSearched = (value, reason) => {
-    return value && value.length >= 3 && reason !== 'reset';
-  }
+// let response = await getFlightSearchReq(request);
 
-  const searchSourceLocations = async (event, value, reason) => {
-    if (canLocationBeSearched(value, reason)) {
-      let results = await getLocations(value);
-      let data = results.data.data;
-      setFromLocations(data);
+// console.log("response from 127 in search flight : ", response);
+// let flights = response;
+// setFlights(flights);
+
+
+
+// function getFlightSearchReq(request) {
+//   // TODO make a REST call to backend and get data for testing using JSON file
+//   updateUserFlight(request);
+
+
+
+//   let data = JSON.parse(JSON.stringify(flightsJsonData));
+//   let resultList = data.data.filter(
+//     (obj) =>
+//       (obj.departureCityName === request.source.address.cityName) &&
+//       (obj.arrivalCityName === request.destination.address.cityName)
+//   );
+//   if (request.filterBy && request.filterBy === 'Price: High to Low') {
+//     resultList = resultList.sort((a, b) => a.price - b.price)
+//   } else if (request.filterBy && request.filterBy === 'Price: Low to high') {
+//     resultList = resultList.sort((a, b) => b.price - a.price);
+//   } else if (request.filterBy && request.filterBy === 'Airline') {
+//     resultList = resultList.sort((a, b) => b.company - a.company);
+//   }
+//   // "departureDate":"2022-12-01",
+//   //         "arrivalDate":"2022-12-01",
+//   //         "departureCityName":"SEATTLE",
+//   //         "arrivalCityName":"DENVER",
+
+//   return resultList;
+// }
+
+
+const onFilterSelected = (type) => {
+  setFilterBy(type);
+  fetchFlights();
+}
+
+const validateForm = () => {
+  let buttonVal = disableSearchBtn();
+  setDisableButton(buttonVal);
+}
+
+const disableSearchBtn = () => {
+  if (noOfPassengers && source !== '' && destination !== '' && departureDate !== '') {
+    if (bookReturn) {
+      return returnDate === '';
+    } else {
+      return false;
     }
   }
 
-  const searchDestinationLocations = async (event, value, reason) => {
-    if (canLocationBeSearched(value, reason)) {
-      let results = await getLocations(value);
-      let data = results.data.data;
-      setToLocations(data);
-    }
+  return true;
+}
+
+const canLocationBeSearched = (value, reason) => {
+  return value && value.length >= 3 && reason !== 'reset';
+}
+
+const searchSourceLocations = async (event, value, reason) => {
+  if (canLocationBeSearched(value, reason)) {
+    let results = await getLocations(value);
+    let data = results.data.data;
+    setFromLocations(data);
   }
+}
 
-  // const disableButton = source == null || destination == null || returnDate == null || departureDate == null;
-  return (
+const searchDestinationLocations = async (event, value, reason) => {
+  if (canLocationBeSearched(value, reason)) {
+    let results = await getLocations(value);
+    let data = results.data.data;
+    setToLocations(data);
+  }
+}
 
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-md-12">
-          <Card className="mrgn">
-            {/* <div className="col-md-3 ml-4"> */}
-            <div className="col-md-3 mrgn">
-              <div className="btn-group d-flex justify-content-center">
-                {bookingTypes.map((type) => {
-                  return (
-                    <button
-                      type="button"
-                      className={`btn ${bookingType === type.id ? "active_btn" : ""}`}
-                      key={type.id}
-                      onClick={() => handleBookType(type.id)}
-                    >
-                      {type.name}
-                    </button>
-                  );
-                })}
-              </div>
+// const disableButton = source == null || destination == null || returnDate == null || departureDate == null;
+return (
+
+  <div className="container-fluid">
+    <div className="row">
+      <div className="col-md-12">
+        <Card className="mrgn">
+          {/* <div className="col-md-3 ml-4"> */}
+          <div className="col-md-3 mrgn">
+            <div className="btn-group d-flex justify-content-center">
+              {bookingTypes.map((type) => {
+                return (
+                  <button
+                    type="button"
+                    className={`btn ${bookingType === type.id ? "active_btn" : ""}`}
+                    key={type.id}
+                    onClick={() => handleBookType(type.id)}
+                  >
+                    {type.name}
+                  </button>
+                );
+              })}
             </div>
-            <div className="row">
-              <div className="col-md-12">
-                <div className="d-flex">
-                  <div className="p-2 mt-2">
-                    <InputSearch
-                      value={source}
-                      input={fromLocations}
-                      onInputChange={searchSourceLocations}
-                      onChange={onSourceSelected}
-                      label="Source"
-                      name="sourceAirport"
-                      className="mt-2" />
-                  </div>
-                  <div className="p-2 mt-2">
-                    <InputSearch
-                      value={destination}
-                      input={toLocations}
-                      onInputChange={searchDestinationLocations}
-                      onChange={onDestinationSelected}
-                      label="Destination"
-                      className="mt-2"
-                    />
-                  </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12">
+              <div className="d-flex">
+                <div className="p-2 mt-2">
+                  <InputSearch
+                    value={source}
+                    input={fromLocations}
+                    onInputChange={searchSourceLocations}
+                    onChange={onSourceSelected}
+                    label="Source"
+                    name="sourceAirport"
+                    className="mt-2" />
+                </div>
+                <div className="p-2 mt-2">
+                  <InputSearch
+                    value={destination}
+                    input={toLocations}
+                    onInputChange={searchDestinationLocations}
+                    onChange={onDestinationSelected}
+                    label="Destination"
+                    className="mt-2"
+                  />
+                </div>
 
-                  <div className="p-2 mt-2">
-                    <CustomDatePicker
-                      value={value}
-                      onChange={handleDepartureDate}
-                      disablePast
-                      format={DATE_FORMAT}
-                      label="Departure"
-                      className="mt-2"
-                    />
-                  </div>
-                  <div className="p-2 mt-2">
+                <div className="p-2 mt-2">
+                  <CustomDatePicker
+                    value={value}
+                    onChange={handleDepartureDate}
+                    disablePast
+                    format={DATE_FORMAT}
+                    label="Departure"
+                    className="mt-2"
+                  />
+                </div>
+                {/* <div className="p-2 mt-2">
                     {bookingType === "return" ? (
                       <CustomDatePicker
                         value={value}
@@ -240,50 +286,50 @@ function SearchFlight() {
                         className="mt-2"
                       />
                     ) : null}
-                  </div>
-                  <div className="p-2 mt-2">
-                    <SelectDropdown
-                      label="No of travellers"
-                      value={noOfPassengersList}
-                      onChange={handleNumberOfPassengers}
-                    />
-                  </div>
+                  </div> */}
+                <div className="p-2 mt-2">
+                  <SelectDropdown
+                    label="No of travellers"
+                    value={noOfPassengersList}
+                    onChange={handleNumberOfPassengers}
+                  />
                 </div>
               </div>
             </div>
-            {/* </div> */}
-            <div className="flt-rt">
-              <Button
-
-                disabled={disableButton}
-                onClick={fetchFlights}
-                btname="Search Flights" />
-            </div>
-          </Card>
-        </div>
-        <div className="col-md-12 mt-3">
-          {showList ? <div>
-            {/* <SearchFilter value={getFilterStrategies()} onChange={onFilterSelected}/> */}
-            <SelectDropdown
-              label="Sort By"
-              value={getFilterStrategies()}
-              onChange={onFilterSelected}
-            />
-            
-            <FlightList flights={flights} noOfPassengers={noOfPassengers} />
-          </div> : <Information />}
-        </div>
-      </div>
-      {
-        loggedinUser ?
-          <div id='bottom'>
-            <Link className='btn btn-outline-light' to="/feedbackform"><Fab sx={styles}><RateReview /></Fab></Link>
           </div>
-          : null
-      }
-    </div>
+          {/* </div> */}
+          <div className="flt-rt">
+            <Button
 
-  );
+              disabled={disableButton}
+              onClick={fetchFlights}
+              btname="Search Flights" />
+          </div>
+        </Card>
+      </div>
+      <div className="col-md-12 mt-3">
+        {showList ? <div>
+          {/* <SearchFilter value={getFilterStrategies()} onChange={onFilterSelected}/> */}
+          <SelectDropdown
+            label="Sort By"
+            value={getFilterStrategies()}
+            onChange={onFilterSelected}
+          />
+
+          <FlightList flights={flights} noOfPassengers={noOfPassengers} />
+        </div> : <Information />}
+      </div>
+    </div>
+    {
+      loggedinUser ?
+        <div id='bottom'>
+          <Link className='btn btn-outline-light' to="/feedbackform"><Fab sx={styles}><RateReview /></Fab></Link>
+        </div>
+        : null
+    }
+  </div>
+
+);
 }
 
 SearchFlight.propTypes = {};

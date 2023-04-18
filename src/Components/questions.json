@@ -1,0 +1,24 @@
+{
+    "questions": [
+        {
+            "city": "Are you interested in staying close to outdoor activities during your trip?",
+            "ans": 0
+        },
+        {
+            "city": "How important is having access to nightlife options during your stay?",
+            "ans": 5
+        },
+        {
+            "city": "Would you like recommendations for local food options in the area?",
+            "ans": 5
+        },
+        {
+            "city": "How much do you value the historical significance of the destination you are visiting?",
+            "ans": 0
+        },
+        {
+            "city": "Are you looking for accommodation options that fit a moderate budget?",
+            "ans": 0
+        }
+    ]
+}

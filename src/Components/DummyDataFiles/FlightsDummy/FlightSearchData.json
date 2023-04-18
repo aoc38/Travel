@@ -2,9 +2,9 @@
     "data": [
         {
             "id":"1",
-            "departureDate":"2022-12-01",
-            "arrivalDate":"2022-12-01",
-            "departureCityName":"SEATTLE",
+            "departureDate":"2022-04-25",
+            "arrivalDate":"2022-04-25",
+            "departureCityName":"AUSTIN",
             "arrivalCityName":"DENVER",
             "flightType":"DOMESTIC",
             "price":370,
