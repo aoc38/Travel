@@ -38,12 +38,12 @@ export default function UserBookinghistory() {
 
   const getSource = (flight) => {
     //return flight.segments[0].departure.iataCode
-    return flight.departureCityName;
+    return flight.source;
   }
 
   const getDestination = (flight) => {
     // return flight.segments[flight.segments.length - 1].arrival.iataCode
-    return flight.arrivalCityName;
+    return flight.destination;
   }
 
   const getStartTime = (flight) => {
@@ -75,7 +75,7 @@ export default function UserBookinghistory() {
   }
 
   const getPrice = (flight) => {
-    return flight.price;
+    return flight.flightPrice;
   }
 
   const getMiles = (flight) => {
@@ -157,12 +157,14 @@ export default function UserBookinghistory() {
                                 </div>
                                 <div>
                                   <h5>{getDestination(flight)}</h5>
+                                  <p>{getModifiedDate(flight.arrivalDate)}</p>
                                  {/* <p>{getEndTime(flight)}</p> */}
 
                                 </div>
                                 <div>
-                                  <h5>{flight.airline}</h5>
-                                  {/*<p>{getDuration(flight)}</p>*/ }
+                                  <h5>{flight.airlineName + " Airlines "}</h5>
+                                  {/* <p>{getDuration(flight)}</p> */}
+                                  
 
                                 </div>
                                 <div>

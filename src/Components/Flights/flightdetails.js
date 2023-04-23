@@ -22,7 +22,7 @@ function Flightdetails() {
   console.log("passenger count in Flight details page: ", pc);
   // let data = getFlightById(id);
   //get new data from session 
-  let data =  JSON.parse(sessionStorage.getItem("user-flight-data")).filter((obj) => obj.id === id);
+  let data =  JSON.parse(sessionStorage.getItem("user-flight-data")).filter((obj) => obj.flightid === id);
   console.log("flight data from flight details page",data);
   let flight = data.length === 1 ? data[0] : {};
   sessionStorage.setItem("flight-data", JSON.stringify(flight));
@@ -143,11 +143,11 @@ function Flightdetails() {
                 >
                   Proceed
                 </Link>
-                <div className="text-center">
+                {/* <div className="text-center">
                   <span className="link-primary">
                     <Link to={"/hotels"}>Book Hotel </Link>
                   </span> to avail 20% discount{" "}
-                </div>
+                </div> */}
 
               </div>
 

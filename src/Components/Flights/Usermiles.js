@@ -7,8 +7,11 @@ import axios from "axios";
 function Usermiles() {
   //getting params from url
   const { id, pc } = useParams();
-  console.log("data in Flight details page: ", id);
-  let data = getFlightById(id);
+  console.log("data in user miles page: ", id);
+  // let data = getFlightById(id);
+  //get new data from session 
+  let data =  JSON.parse(sessionStorage.getItem("user-flight-data")).filter((obj) => obj.flightid === id);
+  console.log("flight data from user miles page",data);
   let flight = data.length === 1 ? data[0] : {};
   console.log("flight details in user miles : ", flight);
   let noOfPassengers = pc;

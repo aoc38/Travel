@@ -17,7 +17,10 @@ function Bookform() {
   //getting params from url
   const { id, pc } = useParams();
   console.log("data in Flight details page: ", id);
-  let data = getFlightById(id);
+  // let data = getFlightById(id);
+  //get new data from session 
+  let data =  JSON.parse(sessionStorage.getItem("user-flight-data")).filter((obj) => obj.flightid === id);
+  console.log("flight data from flight details page",data);
   let flight = data.length === 1 ? data[0] : {};
 
   flight.price = pc * flight.price;
@@ -87,6 +90,7 @@ function Bookform() {
       console.log("response in book flight ", response.data);
       alert("Booking Successful!");
       sessionStorage.setItem("user-info",JSON.stringify(response.data.user));
+      sessionStorage.removeItem("flight-data");
       navigate('/searchFlight');
       // let response = await axios.post("http://localhost:8080/usersignup", userData  );
       // console.log(response.data);

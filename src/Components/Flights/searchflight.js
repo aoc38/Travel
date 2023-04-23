@@ -106,7 +106,7 @@ function SearchFlight() {
       parrivalDate: departureDate
     });
   }
-  
+
 
   const fetchFlights = () => {
     let request = {
@@ -120,162 +120,177 @@ function SearchFlight() {
     }
     updateUserFlight(request);
     const fetchData = async (e) => {
-    // e.preventDefault();
-    try {
-      let response = await axios.post("http://localhost:8080/adduserflight", userFlight);
-      console.log("response  in search flight : ", response);
-      setFlights(response.data);      
-      sessionStorage.setItem("user-flight-data",JSON.stringify(response.data));
-      if (response.data.message !== undefined) {
-        alert(response.data.message);
+      // e.preventDefault();
+      // let response  = {};
+      let flightdata ={};
+      try {
+         let userflightdata = JSON.parse(sessionStorage.getItem("user-flight-data"));
+        if (userflightdata === null) {
+          let response = await axios.post("http://localhost:8080/adduserflight", userFlight);
+          console.log("response  in search flight : ", response);
+          sessionStorage.setItem("user-flight-data", JSON.stringify(response.data));
+          setFlights(response.data);
+          if (response.data.message !== undefined) {
+            alert(response.data.message);
+          }
+          //  sessionStorage.setItem("user-flight-data", JSON.stringify(response.data));
+        }
+        else{
+          setFlights(userflightdata); 
+          sessionStorage.setItem("user-flight-data", JSON.stringify(userflightdata));
+          // sessionStorage.setItem("user-flight-data", JSON.stringify(response.data));
+        }
+        
+
+       
+       
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
       }
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    }
+    };
+
+    fetchData();
+
+    setShowList(true);
   };
 
-  fetchData();
-  
-  setShowList(true);
-};
+  // let response = await getFlightSearchReq(request);
 
-// let response = await getFlightSearchReq(request);
-
-// console.log("response from 127 in search flight : ", response);
-// let flights = response;
-// setFlights(flights);
+  // console.log("response from 127 in search flight : ", response);
+  // let flights = response;
+  // setFlights(flights);
 
 
 
-// function getFlightSearchReq(request) {
-//   // TODO make a REST call to backend and get data for testing using JSON file
-//   updateUserFlight(request);
+  // function getFlightSearchReq(request) {
+  //   // TODO make a REST call to backend and get data for testing using JSON file
+  //   updateUserFlight(request);
 
 
 
-//   let data = JSON.parse(JSON.stringify(flightsJsonData));
-//   let resultList = data.data.filter(
-//     (obj) =>
-//       (obj.departureCityName === request.source.address.cityName) &&
-//       (obj.arrivalCityName === request.destination.address.cityName)
-//   );
-//   if (request.filterBy && request.filterBy === 'Price: High to Low') {
-//     resultList = resultList.sort((a, b) => a.price - b.price)
-//   } else if (request.filterBy && request.filterBy === 'Price: Low to high') {
-//     resultList = resultList.sort((a, b) => b.price - a.price);
-//   } else if (request.filterBy && request.filterBy === 'Airline') {
-//     resultList = resultList.sort((a, b) => b.company - a.company);
-//   }
-//   // "departureDate":"2022-12-01",
-//   //         "arrivalDate":"2022-12-01",
-//   //         "departureCityName":"SEATTLE",
-//   //         "arrivalCityName":"DENVER",
+  //   let data = JSON.parse(JSON.stringify(flightsJsonData));
+  //   let resultList = data.data.filter(
+  //     (obj) =>
+  //       (obj.departureCityName === request.source.address.cityName) &&
+  //       (obj.arrivalCityName === request.destination.address.cityName)
+  //   );
+  //   if (request.filterBy && request.filterBy === 'Price: High to Low') {
+  //     resultList = resultList.sort((a, b) => a.price - b.price)
+  //   } else if (request.filterBy && request.filterBy === 'Price: Low to high') {
+  //     resultList = resultList.sort((a, b) => b.price - a.price);
+  //   } else if (request.filterBy && request.filterBy === 'Airline') {
+  //     resultList = resultList.sort((a, b) => b.company - a.company);
+  //   }
+  //   // "departureDate":"2022-12-01",
+  //   //         "arrivalDate":"2022-12-01",
+  //   //         "departureCityName":"SEATTLE",
+  //   //         "arrivalCityName":"DENVER",
 
-//   return resultList;
-// }
+  //   return resultList;
+  // }
 
 
-const onFilterSelected = (type) => {
-  setFilterBy(type);
-  fetchFlights();
-}
+  const onFilterSelected = (type) => {
+    setFilterBy(type);
+    fetchFlights();
+  }
 
-const validateForm = () => {
-  let buttonVal = disableSearchBtn();
-  setDisableButton(buttonVal);
-}
+  const validateForm = () => {
+    let buttonVal = disableSearchBtn();
+    setDisableButton(buttonVal);
+  }
 
-const disableSearchBtn = () => {
-  if (noOfPassengers && source !== '' && destination !== '' && departureDate !== '') {
-    if (bookReturn) {
-      return returnDate === '';
-    } else {
-      return false;
+  const disableSearchBtn = () => {
+    if (noOfPassengers && source !== '' && destination !== '' && departureDate !== '') {
+      if (bookReturn) {
+        return returnDate === '';
+      } else {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  const canLocationBeSearched = (value, reason) => {
+    return value && value.length >= 3 && reason !== 'reset';
+  }
+
+  const searchSourceLocations = async (event, value, reason) => {
+    if (canLocationBeSearched(value, reason)) {
+      let results = await getLocations(value);
+      let data = results.data.data;
+      setFromLocations(data);
     }
   }
 
-  return true;
-}
-
-const canLocationBeSearched = (value, reason) => {
-  return value && value.length >= 3 && reason !== 'reset';
-}
-
-const searchSourceLocations = async (event, value, reason) => {
-  if (canLocationBeSearched(value, reason)) {
-    let results = await getLocations(value);
-    let data = results.data.data;
-    setFromLocations(data);
+  const searchDestinationLocations = async (event, value, reason) => {
+    if (canLocationBeSearched(value, reason)) {
+      let results = await getLocations(value);
+      let data = results.data.data;
+      setToLocations(data);
+    }
   }
-}
 
-const searchDestinationLocations = async (event, value, reason) => {
-  if (canLocationBeSearched(value, reason)) {
-    let results = await getLocations(value);
-    let data = results.data.data;
-    setToLocations(data);
-  }
-}
+  // const disableButton = source == null || destination == null || returnDate == null || departureDate == null;
+  return (
 
-// const disableButton = source == null || destination == null || returnDate == null || departureDate == null;
-return (
-
-  <div className="container-fluid">
-    <div className="row">
-      <div className="col-md-12">
-        <Card className="mrgn">
-          {/* <div className="col-md-3 ml-4"> */}
-          <div className="col-md-3 mrgn">
-            <div className="btn-group d-flex justify-content-center">
-              {bookingTypes.map((type) => {
-                return (
-                  <button
-                    type="button"
-                    className={`btn ${bookingType === type.id ? "active_btn" : ""}`}
-                    key={type.id}
-                    onClick={() => handleBookType(type.id)}
-                  >
-                    {type.name}
-                  </button>
-                );
-              })}
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-md-12">
+          <Card className="mrgn">
+            {/* <div className="col-md-3 ml-4"> */}
+            <div className="col-md-3 mrgn">
+              <div className="btn-group d-flex justify-content-center">
+                {bookingTypes.map((type) => {
+                  return (
+                    <button
+                      type="button"
+                      className={`btn ${bookingType === type.id ? "active_btn" : ""}`}
+                      key={type.id}
+                      onClick={() => handleBookType(type.id)}
+                    >
+                      {type.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-md-12">
-              <div className="d-flex">
-                <div className="p-2 mt-2">
-                  <InputSearch
-                    value={source}
-                    input={fromLocations}
-                    onInputChange={searchSourceLocations}
-                    onChange={onSourceSelected}
-                    label="Source"
-                    name="sourceAirport"
-                    className="mt-2" />
-                </div>
-                <div className="p-2 mt-2">
-                  <InputSearch
-                    value={destination}
-                    input={toLocations}
-                    onInputChange={searchDestinationLocations}
-                    onChange={onDestinationSelected}
-                    label="Destination"
-                    className="mt-2"
-                  />
-                </div>
+            <div className="row">
+              <div className="col-md-12">
+                <div className="d-flex">
+                  <div className="p-2 mt-2">
+                    <InputSearch
+                      value={source}
+                      input={fromLocations}
+                      onInputChange={searchSourceLocations}
+                      onChange={onSourceSelected}
+                      label="Source"
+                      name="sourceAirport"
+                      className="mt-2" />
+                  </div>
+                  <div className="p-2 mt-2">
+                    <InputSearch
+                      value={destination}
+                      input={toLocations}
+                      onInputChange={searchDestinationLocations}
+                      onChange={onDestinationSelected}
+                      label="Destination"
+                      className="mt-2"
+                    />
+                  </div>
 
-                <div className="p-2 mt-2">
-                  <CustomDatePicker
-                    value={value}
-                    onChange={handleDepartureDate}
-                    disablePast
-                    format={DATE_FORMAT}
-                    label="Departure"
-                    className="mt-2"
-                  />
-                </div>
-                {/* <div className="p-2 mt-2">
+                  <div className="p-2 mt-2">
+                    <CustomDatePicker
+                      value={value}
+                      onChange={handleDepartureDate}
+                      disablePast
+                      format={DATE_FORMAT}
+                      label="Departure"
+                      className="mt-2"
+                    />
+                  </div>
+                  {/* <div className="p-2 mt-2">
                     {bookingType === "return" ? (
                       <CustomDatePicker
                         value={value}
@@ -287,49 +302,49 @@ return (
                       />
                     ) : null}
                   </div> */}
-                <div className="p-2 mt-2">
-                  <SelectDropdown
-                    label="No of travellers"
-                    value={noOfPassengersList}
-                    onChange={handleNumberOfPassengers}
-                  />
+                  <div className="p-2 mt-2">
+                    <SelectDropdown
+                      label="No of travellers"
+                      value={noOfPassengersList}
+                      onChange={handleNumberOfPassengers}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          {/* </div> */}
-          <div className="flt-rt">
-            <Button
+            {/* </div> */}
+            <div className="flt-rt">
+              <Button
 
-              disabled={disableButton}
-              onClick={fetchFlights}
-              btname="Search Flights" />
-          </div>
-        </Card>
-      </div>
-      <div className="col-md-12 mt-3">
-        {showList ? <div>
-          {/* <SearchFilter value={getFilterStrategies()} onChange={onFilterSelected}/> */}
-          <SelectDropdown
-            label="Sort By"
-            value={getFilterStrategies()}
-            onChange={onFilterSelected}
-          />
-
-          <FlightList flights={flights} noOfPassengers={noOfPassengers} />
-        </div> : <Information />}
-      </div>
-    </div>
-    {
-      loggedinUser ?
-        <div id='bottom'>
-          <Link className='btn btn-outline-light' to="/feedbackform"><Fab sx={styles}><RateReview /></Fab></Link>
+                disabled={disableButton}
+                onClick={fetchFlights}
+                btname="Search Flights" />
+            </div>
+          </Card>
         </div>
-        : null
-    }
-  </div>
+        <div className="col-md-12 mt-3">
+          {showList ? <div>
+            {/* <SearchFilter value={getFilterStrategies()} onChange={onFilterSelected}/> */}
+            {/* <SelectDropdown
+              label="Sort By"
+              value={getFilterStrategies()}
+              onChange={onFilterSelected}
+            /> */}
 
-);
+            <FlightList flights={flights} noOfPassengers={noOfPassengers} />
+          </div> : <Information />}
+        </div>
+      </div>
+      {/* {
+        loggedinUser ?
+          <div id='bottom'>
+            <Link className='btn btn-outline-light' to="/feedbackform"><Fab sx={styles}><RateReview /></Fab></Link>
+          </div>
+          : null
+      } */}
+    </div>
+
+  );
 }
 
 SearchFlight.propTypes = {};
